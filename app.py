@@ -11,7 +11,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 import io
 
-
 from preprocessing import preprocess_reviews, get_statistics, get_sentiment_statistics
 
 st.set_page_config(
@@ -55,7 +54,16 @@ if input_method == "Upload CSV":
                  quoting=3,             
                  on_bad_lines="skip"    
             )
-            
+
+            # ==========================================
+            #        FIX KOTAK KOSONG DI TABEL
+            # ==========================================
+            df = df.fillna("-")                        # Ganti None / NaN menjadi "-"
+            df["review"] = df["review"].astype(str)    # Paksa jadi string
+            df["review"] = df["review"].str.strip()    # Rapikan spasi
+            df["review"] = df["review"].replace("", "-")  # Kosong jadi "-"
+            # ==========================================
+
             if 'review' not in df.columns:
                 st.error("File CSV harus memiliki kolom 'review'!")
             else:
@@ -177,7 +185,6 @@ if reviews and len(reviews) > 0:
         
         with tab3:
             st.subheader("☁️ Word Cloud")
-            
             
             all_words = []
             for result in results:
